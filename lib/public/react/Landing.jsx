@@ -1,6 +1,6 @@
-var React = require('react/addons');
+var React = require('react');
 
-var ClassName = React.createClass({
+var Landing = React.createClass({
 
   getInitialState: function() {
     return null;
@@ -13,9 +13,10 @@ var ClassName = React.createClass({
   render: function() {
     return (
       <div>
+      {this.props.greetings}
       </div> 
     );
   }
 });
 
-module.exports = ClassName;
+module.exports = Landing;

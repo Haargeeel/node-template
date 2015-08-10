@@ -5,15 +5,24 @@ var gulp = require('gulp')
   , jshint = require('gulp-jshint')
   , rename = require('gulp-rename')
   , gulpsync = require('gulp-sync')(gulp)
+  , react = require('gulp-react')
   , fs = require('fs')
+
+var timestamp = Date.now();
 
 gulp.task('jade', function() {
   return gulp.src('lib/app/views/*.jade')
         .pipe(gulp.dest('build/views'))
 })
 
+gulp.task('react', function() {
+  return gulp.src('lib/public/react/*.jsx')
+        .pipe(react())
+        .pipe(gulp.dest('build/public/react'))
+})
+
 gulp.task('browserify', function() {
-  return gulp.src('lib/public/js/app.js')
+  return gulp.src('build/public/js/app.js')
         .pipe(browserify())
         .pipe(gulp.dest('build/public/js'))
 })
@@ -37,35 +46,23 @@ gulp.task('server', function() {
 })
 
 gulp.task('clean', function() {
-  var oldestJS = {file: '', date: Date.now()}
-  var oldestCSS = {file: '', date: Date.now()}
-  var jsFiles = fs.readdirSync('build/public/js')
-  if (jsFiles.length > 2) {
-    jsFiles.forEach(function(file) {
-      var ctime = fs.statSync('build/public/js/' + file).ctime
-      if (file.match('^app.*') && ctime < oldestJS.date) {
-        oldestJS = {file: file, date: ctime}
-      }
-    })
-    fs.unlinkSync('build/public/js/' + oldestJS.file)
-  }
+  var jsFiles = fs.readdirSync('build/public/js');
+  jsFiles.forEach(function(file) {
+    fs.unlinkSync('build/public/js/' + file);
+  });
 
-  var cssFiles = fs.readdirSync('build/public/css')
-  if (cssFiles.length > 2) {
-    cssFiles.forEach(function(file) {
-      var ctime = fs.statSync('build/public/css/' + file).ctime
-      if (file.match('^style.*') && ctime < oldestCSS.date) {
-        oldestCSS = {file: file, date: ctime}
-      }
-    })
-    fs.unlinkSync('build/public/css/' + oldestCSS.file)
-  }
+  var cssFiles = fs.readdirSync('build/public/css');
+  cssFiles.forEach(function(file) {
+    fs.unlinkSync('build/public/css/' + file);
+  });
 
+  var reactFiles = fs.readdirSync('build/public/react');
+  reactFiles.forEach(function(file) {
+    fs.unlinkSync('build/public/react/' + file);
+  });
 })
 
 gulp.task('rename', function() {
-  var timestamp = Date.now()
-
   gulp.src('build/public/js/app.js')
   .pipe(rename('app' + timestamp + '.js'))
   .pipe(gulp.dest('build/public/js'))
@@ -84,10 +81,15 @@ gulp.task('rename', function() {
   })
 })
 
-gulp.task('sync', ['jade', 'browserify', 'stylus', 'fonts', 'server'])
+gulp.task('move', function() {
+  gulp.src('lib/public/js/**')
+      .pipe(gulp.dest('build/public/js'))
+})
+
+gulp.task('sync', ['react', 'move', 'jade', 'stylus', 'fonts', 'server'])
 gulp.task('async', ['rename'])
 
-gulp.task('default', gulpsync.sync(['sync', 'rename', 'clean']))
+gulp.task('default', gulpsync.sync(['clean', 'sync', 'browserify', 'rename']))
 
 gulp.task('watch', function() {
   gulp.watch('lib/public/**/*', ['default'])

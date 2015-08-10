@@ -40,7 +40,16 @@ cd $NAME
 touch README.me
 echo "${NAME}" >> README.me
 mkdir build
-mkdir lib
+cd build
+mkdir public
+mkdir views
+cd public
+mkdir js
+mkdir css
+mkdir react
+cd ..
+cd ..
+cp -r "../node-template/lib" "."
 cp -r "../node-template/config" "."
 if [ -n "$DB" ];then
   cd config
@@ -49,25 +58,6 @@ if [ -n "$DB" ];then
   rm *original
   cd ..
 fi
-cd lib
-mkdir app
-mkdir public
-cd app
-mkdir controller
-mkdir models
-cp -r "../../../node-template/plugins" "."
-cp -r "../../../node-template/views" "."
-cd ..
-cd public
-mkdir css
-cp "../../../node-template/style.styl" "css"
-mkdir fonts
-mkdir js
-touch "js/app.js"
-mkdir react
-cp "../../../node-template/react_interface.jsx" "react"
-cd ..
-cd ..
 git init
 npm init
 npm install --save jade
@@ -78,8 +68,10 @@ npm install --save nib
 npm install --save path
 npm install --save stylus
 npm install --save superagent
+npm install --save react
 npm install --save-dev gulp
 npm install --save-dev gulp-browserify
+npm install --save-dev gulp-react
 npm install --save-dev gulp-jade
 npm install --save-dev gulp-jshint
 npm install --save-dev gulp-minify
