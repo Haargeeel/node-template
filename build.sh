@@ -38,7 +38,7 @@ cp "node-template/gulpfile.js" "${NAME}"
 cp "node-template/.gitignore" "${NAME}"
 cd $NAME
 touch README.me
-echo "${NAME}" >> README.me
+echo "${NAME}" >> README.md
 mkdir build
 cd build
 mkdir public
@@ -46,7 +46,6 @@ mkdir views
 cd public
 mkdir js
 mkdir css
-mkdir react
 cd ..
 cd ..
 cp -r "../node-template/lib" "."
@@ -68,7 +67,9 @@ npm install --save nib
 npm install --save path
 npm install --save stylus
 npm install --save superagent
+npm install --save node-jsx
 npm install --save react
+npm install --save react-dom
 npm install --save-dev gulp
 npm install --save-dev gulp-browserify
 npm install --save-dev gulp-react
@@ -80,5 +81,9 @@ npm install --save-dev gulp-stylus
 npm install --save-dev gulp-sync
 npm install --save-dev gulp-uglify
 npm install --save-dev gulp-watch
+npm install --save-dev reactify
+awk '/license/ {print; print "  \"browserify\": {";print "    \"transform\": ["; print "      \"reactify\""; print "    ]"; print "  },"; next}1' package.json >> package2.json
+rm package.json
+mv package2.json package.json
 gulp
 node "."

@@ -1,3 +1,4 @@
+require('node-jsx').install({extension: '.jsx'});
 var express = require('express')
   , bodyParser = require('body-parser')
   , landing = require('./lib/app/controller/landing');
